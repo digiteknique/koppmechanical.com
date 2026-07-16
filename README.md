@@ -38,12 +38,14 @@ the file (see Deploying below).
 
 ## Wiring up the contact form
 
-The form in `#contact` has no backend yet — it currently just shows a friendly
-message on submit (see `js/main.js`). To actually receive submissions, pick one:
-
-- **Formspree / Basin / similar**: set the form's `action` to the service's endpoint and `method="POST"`, then remove the `preventDefault` logic in `main.js`.
-- **Netlify Forms**: if hosting on Netlify, add `data-netlify="true"` and a hidden `form-name` input to the `<form>` tag.
-- **Your own backend**: point `action` at your API endpoint.
+The form in `#contact` currently submits to [Formspree](https://formspree.io)
+(`js/main.js` posts to it via `fetch`, so the visitor sees an inline message
+instead of being redirected off-site). This is a **stopgap** — submissions
+land in the `info@koppmechanical.com` inbox until the business sets up a CRM
+(Housecall Pro or Jobber) and lead intake moves there instead. When that
+happens, replace the form's `action` and the `fetch` handler in `main.js`
+with whatever the chosen CRM's integration requires (an embedded widget or
+its own API/webhook), and remove the Formspree account.
 
 ## Adding real photos
 

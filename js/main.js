@@ -23,8 +23,9 @@
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // Contact form: no backend is wired up yet. This just gives the visitor
-  // feedback so the form doesn't feel broken during development/preview.
+  // Contact form: submits to Formspree (see HTML comment above the <form>
+  // tag) via fetch so the visitor gets inline feedback instead of being
+  // redirected off-site.
   var form = document.getElementById('contact-form');
   var note = document.getElementById('form-note');
 
@@ -35,8 +36,30 @@
         form.reportValidity();
         return;
       }
-      note.textContent = "Thanks! This form isn't connected to an email service yet — see the HTML comment above the <form> tag for setup instructions.";
-      form.reset();
+
+      var submitBtn = form.querySelector('button[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
+      note.textContent = 'Sending…';
+
+      fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' }
+      })
+        .then(function (response) {
+          if (response.ok) {
+            note.textContent = "Thanks! We've received your request and will get back to you within one business hour.";
+            form.reset();
+          } else {
+            note.textContent = "Something went wrong sending that. Please call us instead — we'd rather hear from you than lose the message.";
+          }
+        })
+        .catch(function () {
+          note.textContent = "Something went wrong sending that. Please call us instead — we'd rather hear from you than lose the message.";
+        })
+        .finally(function () {
+          if (submitBtn) submitBtn.disabled = false;
+        });
     });
   }
 })();
