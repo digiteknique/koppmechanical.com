@@ -522,8 +522,23 @@ input:focus, select:focus, textarea:focus {
 }
 
 @media (max-width: 780px) {
-  .main-nav, .header-cta .phone-link { display: none; }
+  .main-nav { display: none; }
   .nav-toggle { display: flex; }
+
+  .header-cta .btn-primary { display: none; }
+  .header-cta .phone-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: var(--color-accent-500);
+    border-radius: var(--radius-sm);
+    color: var(--color-white);
+  }
+  .header-cta .phone-link:hover { background: var(--color-accent-600); color: var(--color-white); }
+  .header-cta .phone-link span { display: none; }
 
   .main-nav {
     display: none;
