@@ -1,40 +1,37 @@
 # Kopp Mechanical — Website
 
-A self-contained static site. No build step, no dependencies — just open `index.html` in a browser, or deploy the folder as-is.
+A self-contained static site. No build step, no dependencies — just open
+`public/index.html` in a browser, or deploy the `public/` folder as-is.
 
 ## Structure
 
 ```
-index.html       All page content and sections
-css/styles.css   Design tokens + styles (colors/fonts at the top of the file)
-js/main.js       Mobile nav, footer year, contact form feedback
-favicon.svg      Logo mark used as the browser tab icon
-robots.txt       Search engine crawl rules
-sitemap.xml      Search engine sitemap
+public/            Everything that gets deployed — Cloudflare (or any host)
+                    should point at THIS folder, not the repo root.
+  index.html        All page content and sections
+  css/styles.css    Design tokens + styles (colors/fonts at the top of the file)
+  js/main.js        Mobile nav, footer year, contact form submission (Formspree)
+  favicon.svg       Logo mark used as the browser tab icon
+  robots.txt        Search engine crawl rules
+  sitemap.xml       Search engine sitemap
+  assets/           Images (og:image, future real photos)
+
+openspec/           Project planning docs (proposals/designs/tasks) — internal,
+                    never deployed.
+.claude/            Claude Code / OpenSpec tooling config — internal, never deployed.
 ```
 
-## Before going live, replace these placeholders
-
-Search the project for square-bracket placeholders and swap in real info:
-
-- `[PHONE]` / `+15555550123` — real phone number (update both the display text and the `tel:` links)
-- `[EMAIL]` / `hello@koppmechanical.com` — real email address
-- `[CITY, ST]`, `[STREET ADDRESS]`, `[ZIP]` — real business address
-- `[City One]`...`[City Six]` in the Service Area section — real towns you serve
-- `[Neighborhood]` in testimonials — replace with real customer quotes once you have them
-- `[XXXXXX]` in the footer — your HVAC license number
-- `koppmechanical.com` — your actual domain, in the `<meta>` tags, JSON-LD block, `sitemap.xml`, and `robots.txt`
+`openspec/` and `.claude/` are committed for project history but deliberately
+live outside `public/` so they're never served by the site (see Deploying below).
 
 ## Updating reviews/testimonials
 
-Yes — it's a plain HTML edit, no CMS or database involved. Each review lives
-in `index.html` inside `<section id="testimonials">` as one `<blockquote class="testimonial-card">`
-block: star rating, quote text, and a `<footer>` with the reviewer's name/area.
-Copy an existing block, edit the text, and delete the one you're replacing.
-To add or remove a whole review, add/remove a `<blockquote>` block — the CSS
-grid (`.grid-3`) will reflow automatically for any number of cards (3 per row
-on desktop, fewer on smaller screens). No rebuild step needed; just re-deploy
-the file (see Deploying below).
+There's no testimonials section yet — it was removed rather than filled with
+placeholder quotes, since the business doesn't have real customer reviews
+yet. To add one once real reviews exist: add a section back into
+`public/index.html` (a `<blockquote class="card">` with a star rating, quote,
+and reviewer name works with the existing `.card`/`.grid-3` styles), and link
+it from the nav.
 
 ## Wiring up the contact form
 
@@ -49,23 +46,26 @@ its own API/webhook), and remove the Formspree account.
 
 ## Adding real photos
 
-The hero badge, about-section headshot, and map are currently SVG placeholders
-so the site works with zero image assets. Drop real photos into an `assets/`
-folder and swap the placeholder `<div>`s for `<img>` tags when ready — also
-add a real `assets/og-image.png` (1200×630) for social link previews.
+The hero badge (icon), about-section headshot, and map are currently SVG
+placeholders/icons so the site works with zero photography. Drop real photos
+into `public/assets/` and swap the placeholder `<div>`s for `<img>` tags when
+ready — also replace `public/assets/og-image.png` (currently a
+brand-generated placeholder) with a real 1200×630 photo for social link
+previews.
 
 ## Deploying to Cloudflare Pages
 
-1. Push this folder to a GitHub (or GitLab) repo.
+1. Push this repo to a GitHub (or GitLab) repo.
 2. In the Cloudflare dashboard: **Workers & Pages → Create → Pages → Connect to Git**, pick the repo.
-3. Build settings: **Framework preset: None**, **Build command: (leave blank)**, **Build output directory: /** (repo root, since there's no build step).
+3. Build settings: **Framework preset: None**, **Build command: (leave blank)**, **Build output directory: `public`** (not `/` — this keeps `openspec/`/`.claude/` out of the deployed site).
 4. Deploy. Cloudflare gives you a `*.pages.dev` URL immediately.
 5. Add your real domain under the Pages project's **Custom domains** tab (if the domain's DNS is already on Cloudflare, this is a couple of clicks and SSL is automatic).
 
 Alternative (no GitHub required): install `wrangler` and run
-`npx wrangler pages deploy .` from this folder — it uploads the current files
-directly. Re-run the same command any time you want to push an update
-(e.g. after editing reviews).
+`npx wrangler pages deploy public` from this folder — it uploads the contents
+of `public/` directly (note the `public` argument — deploying `.` would
+upload the whole repo, including the internal planning docs). Re-run the same
+command any time you want to push an update.
 
-Any other static host works too — Netlify, Vercel, GitHub Pages, or plain FTP.
-No build command needed anywhere.
+Any other static host works too — Netlify, Vercel, GitHub Pages, or plain
+FTP — just make sure you point it at `public/`, not the repo root.
